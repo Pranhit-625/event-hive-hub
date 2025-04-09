@@ -3,6 +3,7 @@ import { useState } from "react";
 import DiscussionMessage from "./DiscussionMessage";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 interface Message {
   id: number;

@@ -50,7 +50,7 @@ const Events = () => {
   }, []);
 
   const handleCreateEvent = (eventData: Omit<Event, 'id'>) => {
-    const newEvent = {
+    const newEvent: Event = {
       id: events.length + 1,
       ...eventData,
       status: 'pending'
@@ -60,8 +60,8 @@ const Events = () => {
 
   const handleUpdateEvent = (updatedEvent: Event) => {
     // Mark as pending when updated
-    const eventToUpdate = { ...updatedEvent, status: 'pending' };
-    const updatedEvents = events.map(event => 
+    const eventToUpdate: Event = { ...updatedEvent, status: 'pending' };
+    const updatedEvents: Event[] = events.map(event => 
       event.id === eventToUpdate.id ? eventToUpdate : event
     );
     setEvents(updatedEvents);
@@ -73,14 +73,14 @@ const Events = () => {
   };
 
   const handleApproveEvent = (id: number) => {
-    const updatedEvents = events.map(event => 
+    const updatedEvents: Event[] = events.map(event => 
       event.id === id ? { ...event, status: 'approved' } : event
     );
     setEvents(updatedEvents);
   };
 
   const handleRejectEvent = (id: number) => {
-    const updatedEvents = events.map(event => 
+    const updatedEvents: Event[] = events.map(event => 
       event.id === id ? { ...event, status: 'rejected' } : event
     );
     setEvents(updatedEvents);
