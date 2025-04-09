@@ -17,6 +17,7 @@ interface FeedbackItem {
   rating: number;
   studentName: string;
   createdAt: string;
+  organizerId?: string; // Added to track which organizer created the event
 }
 
 interface EventRating {
@@ -24,6 +25,7 @@ interface EventRating {
   eventTitle: string;
   averageRating: number;
   totalFeedbacks: number;
+  organizerId?: string; // Added to track which organizer created the event
 }
 
 const Feedback = () => {
@@ -31,9 +33,9 @@ const Feedback = () => {
   const [feedback, setFeedback] = useState('');
   const [selectedRating, setSelectedRating] = useState(0);
   const [selectedEvent, setSelectedEvent] = useState<number | null>(null);
-  const [events, setEvents] = useState<Array<{id: number, title: string}>>([
-    { id: 1, title: "Annual Cultural Fest" },
-    { id: 2, title: "Technical Symposium" }
+  const [events, setEvents] = useState<Array<{id: number, title: string, organizerId?: string}>>([
+    { id: 1, title: "Annual Cultural Fest", organizerId: "org1" },
+    { id: 2, title: "Technical Symposium", organizerId: "org2" }
   ]);
   const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([
     {
@@ -43,7 +45,8 @@ const Feedback = () => {
       comment: "It was a fantastic event with great performances!",
       rating: 5,
       studentName: "Alice Johnson",
-      createdAt: "2025-03-26"
+      createdAt: "2025-03-26",
+      organizerId: "org1"
     },
     {
       id: 2,
@@ -52,7 +55,8 @@ const Feedback = () => {
       comment: "Enjoyed most of the performances, but timing was an issue.",
       rating: 4,
       studentName: "Bob Smith",
-      createdAt: "2025-03-25"
+      createdAt: "2025-03-25",
+      organizerId: "org1"
     },
     {
       id: 3,
@@ -61,15 +65,24 @@ const Feedback = () => {
       comment: "Very informative sessions and great networking opportunities.",
       rating: 4.5,
       studentName: "Claire Davis",
-      createdAt: "2025-03-26"
+      createdAt: "2025-03-26",
+      organizerId: "org2"
     }
   ]);
+  const [currentOrganizerId, setCurrentOrganizerId] = useState<string>("org1"); // For demo purposes
 
   useEffect(() => {
     // Get user role from localStorage
     const storedRole = localStorage.getItem("userRole") as UserRole;
     if (storedRole) {
       setUserRole(storedRole);
+    }
+    
+    // In a real app, you would get the current organizer ID from authentication
+    // This is just for demo purposes
+    const demoOrganizerId = localStorage.getItem("organizerId");
+    if (demoOrganizerId) {
+      setCurrentOrganizerId(demoOrganizerId);
     }
   }, []);
 
@@ -91,7 +104,15 @@ const Feedback = () => {
     }
     
     // Add new feedback to the list
-    const eventTitle = events.find(e => e.id === selectedEvent)?.title || '';
+    const selectedEventData = events.find(e => e.id === selectedEvent);
+    if (!selectedEventData) {
+      toast.error('Invalid event selected');
+      return;
+    }
+
+    const eventTitle = selectedEventData.title || '';
+    const organizerId = selectedEventData.organizerId || '';
+    
     const newFeedback: FeedbackItem = {
       id: feedbacks.length + 1,
       eventId: selectedEvent,
@@ -99,7 +120,8 @@ const Feedback = () => {
       comment: feedback,
       rating: selectedRating,
       studentName: "Current User",
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString().split('T')[0],
+      organizerId
     };
     
     setFeedbacks([...feedbacks, newFeedback]);
@@ -119,14 +141,14 @@ const Feedback = () => {
       eventId: event.id,
       eventTitle: event.title,
       averageRating: parseFloat(averageRating.toFixed(1)),
-      totalFeedbacks: eventFeedbacks.length
+      totalFeedbacks: eventFeedbacks.length,
+      organizerId: event.organizerId
     };
   });
 
-  // Filter feedbacks for event organizers (in a real app, would filter by organizer's events)
-  const organizerEvents = [1]; // Assuming the organizer created event with id 1
-  const organizerFeedbacks = feedbacks.filter(f => organizerEvents.includes(f.eventId));
-  const organizerEventRatings = eventRatings.filter(r => organizerEvents.includes(r.eventId));
+  // Filter feedbacks for the current event organizer
+  const organizerFeedbacks = feedbacks.filter(f => f.organizerId === currentOrganizerId);
+  const organizerEventRatings = eventRatings.filter(r => r.organizerId === currentOrganizerId);
 
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
