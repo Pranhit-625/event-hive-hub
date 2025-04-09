@@ -30,7 +30,7 @@ const AdminHome = () => {
                 className="w-full"
                 onClick={() => navigate("/events")}
               >
-                Manage Events
+                Approve Events
               </Button>
             </CardContent>
           </Card>

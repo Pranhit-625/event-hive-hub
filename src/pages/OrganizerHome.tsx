@@ -23,7 +23,7 @@ const OrganizerHome = () => {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-500 mb-4">
-                Create, edit, and manage your events
+                Create and submit event proposals
               </p>
               <Button 
                 variant="default" 
