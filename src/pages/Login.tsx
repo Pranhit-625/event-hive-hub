@@ -1,20 +1,18 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { UserRole } from "./Discussions";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { UserRole } from "./Discussions";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<UserRole>(UserRole.STUDENT);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,46 +23,14 @@ const Login = () => {
     }
 
     // In a real app, you would authenticate the user here
-    // For now, we'll just set the role and redirect
-    localStorage.setItem("userRole", role);
-    
-    // Redirect based on role
-    switch (role) {
-      case UserRole.ADMIN:
-        navigate("/admin-home");
-        break;
-      case UserRole.EVENT_ORGANIZER:
-        navigate("/organizer-home");
-        break;
-      case UserRole.STUDENT:
-      default:
-        navigate("/student-home");
-        break;
-    }
-
-    toast.success(`Logged in successfully as ${role}`);
+    // For now, we'll just redirect to the role selection page
+    navigate("/role-select");
   };
 
   const handleGoogleLogin = () => {
     // In a real app, you would implement Google authentication
-    // For demo purposes, we'll just set the role and redirect
-    localStorage.setItem("userRole", role);
-    
-    // Redirect based on role
-    switch (role) {
-      case UserRole.ADMIN:
-        navigate("/admin-home");
-        break;
-      case UserRole.EVENT_ORGANIZER:
-        navigate("/organizer-home");
-        break;
-      case UserRole.STUDENT:
-      default:
-        navigate("/student-home");
-        break;
-    }
-
-    toast.success(`Logged in with Google as ${role}`);
+    // For demo purposes, we'll just redirect to the role selection page
+    navigate("/role-select");
   };
 
   return (
@@ -95,28 +61,6 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Select your role</Label>
-              <RadioGroup 
-                value={role} 
-                onValueChange={(value) => setRole(value as UserRole)}
-                className="flex space-x-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={UserRole.STUDENT} id="student" />
-                  <Label htmlFor="student">Student</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={UserRole.EVENT_ORGANIZER} id="organizer" />
-                  <Label htmlFor="organizer">Event Organizer</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={UserRole.ADMIN} id="admin" />
-                  <Label htmlFor="admin">Admin</Label>
-                </div>
-              </RadioGroup>
             </div>
             
             <Button type="submit" className="w-full">Sign In</Button>
